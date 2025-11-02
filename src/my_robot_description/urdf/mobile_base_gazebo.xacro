@@ -17,6 +17,8 @@
         <material>Gazebo/Grey</material>
         <mu1 value="0.1" />
         <mu2 value="0.1" />
+        <slip1>1.0</slip1>
+        <slip2>1.0</slip2>
     </gazebo>
 
     <gazebo>
@@ -29,6 +31,12 @@
             <!-- kinematics -->
             <wheel_separation>0.45</wheel_separation>
             <wheel_diameter>0.2</wheel_diameter>
+            <!-- limits -->
+            <max_wheel_torque>20</max_wheel_torque>
+            <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+            <!-- Receive velocity commands on this ROS topic -->
+            <command_topic>cmd_vel</command_topic>
             <!-- output -->
             <publish_odom>true</publish_odom>
             <publish_odom_tf>true</publish_odom_tf>
@@ -36,6 +44,13 @@
             <odometry_topic>odom</odometry_topic>
             <odometry_frame>odom</odometry_frame>
             <robot_base_frame>base_footprint</robot_base_frame>
+            <!-- Odometry source, 0 for ENCODER, 1 for WORLD, defaults to WORLD -->
+            <odometry_source>0</odometry_source>
+
+            <!-- Change the ROS topic we will publish the odometry data to -->
+            <ros>
+            <remapping>odom:=wheel/odometry</remapping>
+            </ros>
         </plugin>
     </gazebo>
 
