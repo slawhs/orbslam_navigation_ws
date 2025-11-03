@@ -1,0 +1,83 @@
+<launch>
+    <!-- ========== Paths ========== -->
+    <let name="description_pkg" value="$(find-pkg-share my_robot_description)" />
+    <let name="localization_pkg" value="$(find-pkg-share my_robot_localization)" />
+    <let name="bringup_pkg" value="$(find-pkg-share my_robot_bringup)" />
+    <let name="nav2_pkg" value="$(find-pkg-share nav2_bringup)" />
+    <let name="nav2_bt_pkg" value="$(find-pkg-share nav2_bt_navigator)" />
+    <let name="navigation_pkg" value="$(find-pkg-share my_robot_navigation)" />
+
+    <let name="urdf_path" value="$(var description_pkg)/urdf/my_nav_robot.urdf.xacro" />
+    <let name="rviz_config_path" value="$(var bringup_pkg)/rviz/ekf_integration_config.rviz" />
+    <let name="world_path" value="$(var bringup_pkg)/worlds/smalltown.world" />
+    <let name="ekf_config_path" value="$(var localization_pkg)/config/ekf.yaml" />
+    <let name="map_path" value="$(var navigation_pkg)/maps/smalltown_world.yaml" />
+    <let name="nav2_params_path" value="$(var navigation_pkg)/params/nav2_params.yaml" />
+    <let name="bt_xml_path" value="$(var nav2_bt_pkg)/behavior_trees/navigate_w_replanning_and_recovery.xml" />
+
+    <!-- ========== Launch Arguments ========== -->
+    <arg name="use_namespace" default="False" 
+       description="Whether to use a namespace for the robot"/>
+    <arg name="namespace" default="" 
+       description="Namespace for the robot"/>
+    <arg name="use_robot_state_pub" default="True"
+       description="Whether to start the robot state publisher"/>
+    <arg name="use_rviz" default="True"
+       description="Whether to start RVIZ"/>
+    <arg name="use_sim_time" default="True"
+        description="Use simulation (Gazebo) clock if true"/>
+    <arg name="use_simulator" default="True"
+       description="Whether to start the simulator"/>
+    <arg name="use_nav2" default="True"
+       description="Whether to start the navigation stack"/>
+    <arg name="slam" default="False"
+       description="Whether to run SLAM"/>
+    <arg name="autostart" default="True"
+       description="Automatically startup the nav2 stack"/>
+    
+    <!-- ========== Nodes & Includes ========== -->
+    
+    <!-- ========== Robot State Publisher ========== -->
+    <node
+        if="$(var use_robot_state_pub)"
+        pkg="robot_state_publisher"
+        exec="robot_state_publisher"
+        output="screen">
+        <param name="use_sim_time" value="$(var use_sim_time)"/>
+        <param name="robot_description" value="$(command 'xacro $(var urdf_path)')" />
+    </node>
+
+    <!-- ========== Gazebo ========== -->
+    <include 
+        if="$(var use_simulator)"
+        file="$(find-pkg-share gazebo_ros)/launch/gazebo.launch.py">
+     <arg name="world" value="$(var world_path)" />
+    </include>
+
+    <node pkg="gazebo_ros"
+          exec="spawn_entity.py"
+          args="-topic robot_description -entity my_robot" />
+
+    <!-- ========== EKF Localization ========== -->
+    <include file="$(find-pkg-share my_robot_localization)/launch/ekf.launch.py" />
+
+    <!-- ========== RVIZ ========== -->
+    <node if="$(var use_rviz)"
+          pkg="rviz2"
+          exec="rviz2"
+          name="rviz2"
+          output="screen" 
+          args="-d $(var rviz_config_path)" />
+
+    <!-- ========== Nav2 ========== -->
+    <include file="$(var nav2_pkg)/launch/bringup_launch.py">
+      <arg name="namespace" value="$(var namespace)" />
+      <arg name="use_namespace" value="$(var use_namespace)" />
+      <arg name="map" value="$(var map_path)" />
+      <arg name="use_sim_time" value="$(var use_sim_time)" />
+      <arg name="slam" value="$(var slam)" />
+      <arg name="params_file" value="$(var nav2_params_path)" />
+      <arg name="default_bt_xml_filename" value="$(var bt_xml_path)" />
+    <arg name="autostart" value="$(var autostart)" />
+    </include>
+</launch>
