@@ -1,6 +1,9 @@
 ./build/
 ./log/
 ./install/
+build/
+log/
+install/
 src/.vscode/
 .vscode/
 **/__pycache__/
