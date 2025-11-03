@@ -1,0 +1,53 @@
+<launch>
+    <!-- ========== Launch Paths ========== -->
+    <let name="urdf_path" 
+         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf.xacro" />
+    <let name="rviz_config_path"
+         value="$(find-pkg-share my_robot_bringup)/rviz/ekf_integration_config.rviz" />
+    <let name="world_path"
+         value="$(find-pkg-share my_robot_bringup)/worlds/test_world.world" />
+    <let name="ekf_config_path"
+         value="$(find-pkg-share my_robot_localization)/config/ekf.yaml" />
+
+    <!-- ========== Launch Arguments ========== -->
+    <arg name="use_robot_state_pub" default="True"
+       description="Whether to start the robot state publisher"/>
+    <arg name="use_rviz" default="True"
+       description="Whether to start RVIZ"/>
+    <arg name="use_sim_time" default="true"
+        description="Use simulation (Gazebo) clock if true"/>
+    <arg name="use_simulator" default="True"
+       description="Whether to start the simulator"/>
+
+    <node
+        if="$(var use_robot_state_pub)"
+        pkg="robot_state_publisher"
+        exec="robot_state_publisher"
+        output="screen">
+        <param name="use_sim_time" value="$(var use_sim_time)"/>
+        <param name="robot_description"
+               value="$(command 'xacro $(var urdf_path)')" />
+    </node>
+
+    <include 
+        if="$(var use_simulator)"
+        file="$(find-pkg-share gazebo_ros)/launch/gazebo.launch.py">
+     <arg name="world" value="$(var world_path)" />
+    </include>
+
+    <node pkg="gazebo_ros" exec="spawn_entity.py"
+          args="-topic robot_description -entity my_robot" />
+
+    <!-- <node
+        pkg="robot_localization"
+        exec="ekf_node"
+        name="ekf_filter_node"
+        output="screen">
+        <param from="$(var ekf_config_path)"/>
+        <param name="use_sim_time" value="$(var use_sim_time)"/>
+    </node> -->
+    <include file="$(find-pkg-share my_robot_localization)/launch/ekf.launch.py" />
+
+    <node pkg="rviz2" exec="rviz2" output="screen" 
+          args="-d $(var rviz_config_path)" />
+</launch>
