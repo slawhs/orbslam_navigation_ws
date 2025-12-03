@@ -26,6 +26,9 @@ find_package(Eigen3 3.3.0 REQUIRED) # Matched with Sophus
 find_package(Pangolin REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common io filters)
+find_package(ament_index_cpp REQUIRED)
+find_package(pcl_conversions REQUIRED)
 
 # Header file locations [C++ node]
 include_directories(include) # Add .hpp, .h files from include/ros2_orb_slam3
@@ -164,6 +167,7 @@ ament_target_dependencies(mono_node_cpp
 
 target_link_libraries(mono_node_cpp PUBLIC orb_slam3_lib) # Link a node with the internal shared library
 
+# ========= RGBD ORBSLAM3 from TUM =========
 add_executable(rgbd_node_cpp
   src/rgbd_example.cpp
   src/rgbd_mode.cpp
@@ -176,6 +180,45 @@ ament_target_dependencies(rgbd_node_cpp
 target_link_libraries(rgbd_node_cpp PUBLIC orb_slam3_lib)
 
 
+# ========= RGBD ORBSLAM from image topic =========
+add_executable(rgbd_orbslam_mapping_node
+  src/rgbd_orbslam_node.cpp  
+  src/rgbd_orbslam_mapping.cpp
+)
+
+ament_target_dependencies(rgbd_orbslam_mapping_node
+  rclcpp 
+  sensor_msgs 
+  cv_bridge 
+  message_filters 
+  ament_index_cpp
+)
+
+target_link_libraries(rgbd_orbslam_mapping_node PUBLIC
+  orb_slam3_lib
+  ${OpenCV_LIBS} 
+  ${Pangolin_LIBRARIES}
+)
+
+# ========= ORBSLAM Map Points to PointCloud =========
+
+add_executable(mappoints_to_pointcloud_node
+  src/mappoints_to_pointcloud_main.cpp
+  src/mappoints_to_pointcloud.cpp
+)
+
+ament_target_dependencies(mappoints_to_pointcloud_node 
+  rclcpp
+  sensor_msgs
+  pcl_conversions
+)
+
+target_link_libraries(mappoints_to_pointcloud_node 
+  PCL::common 
+  PCL::io 
+  PCL::filters
+)
+
 # Install all the header files in package/package/include
 install (DIRECTORY include/ 
         DESTINATION include
@@ -186,7 +229,7 @@ install(DIRECTORY launch
 )
 
 # Install our node and library
-install(TARGETS mono_node_cpp rgbd_node_cpp orb_slam3_lib
+install(TARGETS mono_node_cpp rgbd_node_cpp orb_slam3_lib rgbd_orbslam_mapping_node mappoints_to_pointcloud_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -209,7 +252,6 @@ ament_export_dependencies(
   orb_slam3_lib
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
-
 
 # Python node
 # Install Python modules, submodules
