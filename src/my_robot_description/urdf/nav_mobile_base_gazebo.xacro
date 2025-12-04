@@ -48,9 +48,9 @@
             <odometry_source>1</odometry_source>
 
             <!-- Change the ROS topic we will publish the odometry data to -->
-            <ros>
+            <!-- <ros>
             <remapping>odom:=wheel/odometry</remapping>
-            </ros>
+            </ros> -->
         </plugin>
     </gazebo>
 

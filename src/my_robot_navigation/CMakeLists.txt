@@ -18,7 +18,7 @@ find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 
 install(
-  DIRECTORY maps maps
+  DIRECTORY maps params
   DESTINATION share/${PROJECT_NAME}/
 )
 

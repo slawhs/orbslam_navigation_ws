@@ -3,18 +3,18 @@
 
     <xacro:property name="lidar_radius" value="0.035" />
     <xacro:property name="lidar_height" value="0.042" />
-    <xacro:property name="two_d_lidar_sample_size" value="120"/>
-    <xacro:property name="two_d_lidar_min_angle" value="-3.14159"/>
-    <xacro:property name="two_d_lidar_max_angle" value="3.14159"/>
-    <xacro:property name="two_d_lidar_min_range" value="0.16"/>
-    <xacro:property name="two_d_lidar_max_range" value="8"/>
+    <xacro:property name="two_d_lidar_sample_size" value="361"/>
+    <xacro:property name="two_d_lidar_min_angle" value="-180"/>
+    <xacro:property name="two_d_lidar_max_angle" value="180"/>
+    <xacro:property name="two_d_lidar_min_range" value="0.12"/>
+    <xacro:property name="two_d_lidar_max_range" value="3.5"/>
 
     <link name="lidar_link">
         <visual>
             <geometry>
                 <cylinder radius="${lidar_radius}" length="${lidar_height}" />
             </geometry>
-            <material name="black" />
+            <material name="grey" />
         </visual>
         <collision>
             <geometry>
@@ -57,13 +57,13 @@
                 <noise>
                     <type>gaussian</type>
                     <mean>0.0</mean>
-                    <stddev>0.0</stddev>
+                    <stddev>0.01</stddev>
                 </noise>
             </ray>
             <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
                 <ros>
-                    <namespace>/ray</namespace>
-                    <remapping>~/out:=laserscan</remapping>
+                    <output>screen</output>
+                    <remapping>~/out:=/scan</remapping>
                 </ros>
                 <output_type>sensor_msgs/LaserScan</output_type>
             </plugin>
