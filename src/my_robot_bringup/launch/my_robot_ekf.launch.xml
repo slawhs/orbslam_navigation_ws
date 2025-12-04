@@ -5,7 +5,7 @@
     <let name="rviz_config_path"
          value="$(find-pkg-share my_robot_bringup)/rviz/ekf_integration_config.rviz" />
     <let name="world_path"
-         value="$(find-pkg-share my_robot_bringup)/worlds/test_world.world" />
+         value="$(find-pkg-share my_robot_bringup)/worlds/office_small.world" />
     <let name="ekf_config_path"
          value="$(find-pkg-share my_robot_localization)/config/ekf.yaml" />
 
@@ -38,14 +38,6 @@
     <node pkg="gazebo_ros" exec="spawn_entity.py"
           args="-topic robot_description -entity my_robot" />
 
-    <!-- <node
-        pkg="robot_localization"
-        exec="ekf_node"
-        name="ekf_filter_node"
-        output="screen">
-        <param from="$(var ekf_config_path)"/>
-        <param name="use_sim_time" value="$(var use_sim_time)"/>
-    </node> -->
     <include file="$(find-pkg-share my_robot_localization)/launch/ekf.launch.py" />
 
     <node pkg="rviz2" exec="rviz2" output="screen" 

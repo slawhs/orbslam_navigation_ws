@@ -10,7 +10,7 @@
             <geometry>
                 <box size="${imu_length} ${imu_width} ${imu_height}" />
             </geometry>
-            <material name="green" />
+            <material name="grey" />
         </visual>
         <collision>
             <geometry>
