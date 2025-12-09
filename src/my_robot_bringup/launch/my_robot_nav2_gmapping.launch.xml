@@ -8,7 +8,7 @@
     <let name="navigation_pkg" value="$(find-pkg-share my_robot_navigation)" />
 
     <let name="urdf_path" value="$(var description_pkg)/urdf/my_nav_robot.urdf.xacro" />
-    <let name="rviz_config_path" value="$(var bringup_pkg)/rviz/slam_config.rviz" />
+    <let name="rviz_config_path" value="$(var bringup_pkg)/rviz/gmapping_config.rviz" />
     <let name="world_path" value="$(var bringup_pkg)/worlds/office_small.world" />
     <let name="ekf_config_path" value="$(var localization_pkg)/config/nav_ekf.yaml" />
     <!-- <let name="map_path" value="$(var navigation_pkg)/maps/office_small.yaml" /> -->
@@ -82,11 +82,17 @@
     <arg name="autostart" value="$(var autostart)" />
     </include> -->
 
+    <!-- ========== Gmapping ========== -->
+    <node pkg="gmapper" exec="gmap" output="screen">
+      <remap from="odom" to="/wheel/odometry"/>
+      <remap from="scan" to="/scan" />
+    </node>
+
     <!-- ======== SLAM (Map Creation Mode) ======== -->
-    <include file="$(var nav2_pkg)/launch/slam_launch.py">
+    <!-- <include file="$(var nav2_pkg)/launch/slam_launch.py">
       <arg name="namespace" value="$(var namespace)" />
       <arg name="use_namespace" value="$(var use_namespace)" />
       <arg name="use_sim_time" value="$(var use_sim_time)" />
       <arg name="params_file" value="$(var nav2_params_path)" />
-    </include>
+    </include> -->
 </launch>

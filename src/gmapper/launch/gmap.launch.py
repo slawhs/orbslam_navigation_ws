@@ -12,8 +12,5 @@ def generate_launch_description():
             node_executable='gmap',
             output='screen',
             parameters=[{'use_sim_time':use_sim_time}],
-            remapping=[
-            	('/scan', '/ray/laserscan'),
-            ]
         ),
     ])
