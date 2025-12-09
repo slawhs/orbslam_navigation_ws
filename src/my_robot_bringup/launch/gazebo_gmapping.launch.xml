@@ -1,6 +1,6 @@
 <launch>
      <let name="urdf_path" 
-         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf.xacro" />
+         value="$(find-pkg-share my_robot_description)/urdf/my_nav_robot.urdf.xacro" />
      <let name="rviz_config_path"
          value="/home/slawhs/robot_perception/orbslam_navigation_ws/src/my_robot_bringup/rviz/urdf_sensor_integration_config.rviz" />
 

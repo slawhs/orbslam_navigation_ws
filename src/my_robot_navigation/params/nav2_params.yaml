@@ -12,6 +12,8 @@ amcl:
     beam_skip_threshold: 0.3
     do_beamskip: false
     global_frame_id: "map"
+    use_map_topic: true
+    map_topic: map
     initial_pose: [0.0, 0.0, 0.0, 0.0]
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
@@ -29,7 +31,10 @@ amcl:
     resample_interval: 1
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     save_pose_rate: 0.5
-    set_initial_pose: False
+    set_initial_pose: True #False
+    initial_pose_x: 0.0
+    initial_pose_y: 0.0
+    initial_pose_a: 0.0
     sigma_hit: 0.2
     tf_broadcast: true
     transform_tolerance: 1.0
@@ -53,7 +58,7 @@ bt_navigator:
   ros__parameters:
     use_sim_time: True
     global_frame: map
-    robot_base_frame: base_link
+    robot_base_frame: base_footprint #base_link
     odom_topic: /odometry/filtered #/wheel/odometry
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -104,6 +109,9 @@ bt_navigator_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: True
+    base_frame_id: base_footprint
+    global_frame_id: map
+    odom_frame_id: odom
     controller_frequency: 2.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
@@ -181,8 +189,8 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0 
       publish_frequency: 2.0
-      global_frame: odom
-      robot_base_frame: base_link
+      global_frame: map #odom
+      robot_base_frame: base_footprint #base_link
       use_sim_time: True
       rolling_window: true
       width: 10
@@ -230,7 +238,7 @@ global_costmap:
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
-      robot_base_frame: base_link
+      robot_base_frame: base_footprint #base_link
       use_sim_time: True
       robot_radius: 0.75
       resolution: 0.05
@@ -268,7 +276,7 @@ global_costmap:
 map_server:
   ros__parameters:
     use_sim_time: True
-    yaml_filename: "turtlebot3_world.yaml"
+    yaml_filename: "home/tomy/orbslam_navigation_ws/src/my_robot_navigation/maps/office_small.yaml" #"turtlebot3_world.yaml"
 
 map_saver:
   ros__parameters:
@@ -305,10 +313,10 @@ recoveries_server:
       plugin: "nav2_recoveries/BackUp"
     wait:
       plugin: "nav2_recoveries/Wait"
-    global_frame: odom
-    robot_base_frame: base_link
+    global_frame: map #odom
+    robot_base_frame: base_footprint #base_link
     transform_timeout: 0.1
-    use_sim_time: true
+    use_sim_time: True
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
